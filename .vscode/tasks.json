@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Python (venv) - current file",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/bin/python",
+      "args": ["${file}"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always"
+      },
+      "problemMatcher": []
+    },
+    // HOW TO RUN: Cmd+Shift+P → "Tasks: Run Task" → "Review Copilot Instructions - Check Recent Changes"
+    // PURPOSE: Shows files/folders changed in last 7 days to help you update copilot-instructions.md
+    {
+      "label": "Review Copilot Instructions - Check Recent Changes",
+      "type": "shell",
+      "command": "bash",
+      "args": [
+        "-c",
+        "echo '=== Recent Directory Changes (last 7 days) ===' && find ${workspaceFolder} -maxdepth 2 -type d -mtime -7 -not -path '*/\\.*' 2>/dev/null | sort && echo '' && echo '=== Recent Files Added/Modified (last 7 days) ===' && find ${workspaceFolder} -maxdepth 3 -type f \\( -name '*.py' -o -name '*.js' -o -name '*.java' -o -name '*.dart' -o -name 'package.json' -o -name 'requirements.txt' \\) -mtime -7 2>/dev/null | sort && echo '' && echo '=== ACTION REQUIRED ===' && echo 'Review the above changes and update:' && echo '  .github/copilot-instructions.md' && echo '' && echo 'Consider documenting:' && echo '  - New directories or project areas' && echo '  - New dependencies or tools' && echo '  - Changed conventions or patterns' && echo '  - Important architectural decisions' && echo '' && (open -t ../../.github/copilot-instructions.md 2>/dev/null || code ../../.github/copilot-instructions.md)"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

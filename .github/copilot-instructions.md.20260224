@@ -1,0 +1,369 @@
+# Copilot Instructions for pumped-scripts
+
+## Repository Overview
+
+**pumped-scripts** is a multi-purpose repository containing utility scripts and test applications for various platforms and languages (Windows, macOS, Linux, Cygwin). The primary focus is in `/test-apps`, which contains experimental projects across multiple technology stacks.
+
+### Key Directory Structure
+
+- **`/test-apps`** - Main experimental workspace
+  - `python/` - Python learning/architecture documentation projects
+  - `bash/` - Bash utilities and scripts
+  - `js/` - JavaScript/Node projects
+  - `mcp/` - Model Context Protocol (MCP) server experiments
+  - `scaf/` - Scaffolding diagram/architectural analysis tools
+  - `ai_studio/` - AI-related projects
+  - And others (AntiGravity, dart, java, clang, mermaid, etc.)
+
+## Build, Test, and Lint Commands
+
+### JavaScript/Node Projects (in `/test-apps`)
+
+**Setup:**
+```bash
+cd test-apps
+npm install
+```
+
+**Mermaid diagram rendering:**
+```bash
+# Render a single mermaid file to SVG
+npm run mermaid:render -- path/to/file.mmd
+
+# Render all .mmd files in current directory to ./diagrams/
+npm run mermaid:render:all
+```
+
+### Python Projects
+
+**Virtual Environment Setup:**
+```bash
+cd test-apps
+source .venv/bin/activate  # macOS/Linux
+# or: .venv\Scripts\activate  # Windows
+```
+
+**Common libraries already in use:**
+- `pdf2image` - PDF to image conversion
+- `Pillow` - Image processing
+- `matplotlib` - Plotting and visualization
+- `numpy` - Numerical operations
+
+**Install dependencies:**
+```bash
+pip install -r requirements.txt  # if exists
+# or individually: pip install pdf2image Pillow matplotlib
+```
+
+**System dependencies:**
+- macOS: `brew install poppler` (required by pdf2image)
+
+### PostgreSQL Database
+
+**Local Database Connection (Development):**
+- **Host**: `localhost`
+- **Port**: `5432`
+- **Databases**:
+  - `pumped` - Main development database
+  - `pumpedtst` - Test database
+  - `postgres` - System database
+- **User**: `postgres`
+- **Version**: PostgreSQL 18.1 (Postgres.app on macOS)
+
+**Test Connection:**
+```bash
+psql -h localhost -p 5432 -U postgres -d pumped -c "SELECT version();"
+```
+
+**List All Databases:**
+```bash
+psql -h localhost -p 5432 -U postgres -d pumped -c "SELECT datname FROM pg_database ORDER BY datname;"
+```
+
+**Common psql Commands:**
+```bash
+# Connect to a database
+psql -h localhost -p 5432 -U postgres -d pumped
+
+# List all tables
+\dt
+
+# Describe a table
+\d table_name
+
+# Execute a query
+psql -h localhost -p 5432 -U postgres -d pumped -c "SELECT * FROM table_name;"
+
+# Exit psql
+\q
+```
+
+### No centralized test suite
+
+This is a collection of experimental scripts rather than a unified project. Individual tools should be tested locally before committing.
+
+## High-Level Architecture
+
+### Repository Purpose
+
+This repository serves as a **sandbox for experimentation and learning**:
+
+1. **Test Applications** - Various small projects exploring different technologies (Python, JavaScript, Bash, etc.)
+2. **Documentation-Driven Development** - Many projects include architectural analysis and learning documentation (e.g., `copilot_architecture_layers.md`)
+3. **Integration Testing** - Experiments with MCP (Model Context Protocol) servers and GitHub integrations
+4. **Data Processing** - PDF extraction, image processing, and scaffolding diagram generation
+
+### Key Architectural Patterns
+
+**Python Projects:**
+- Use virtual environment at `/test-apps/.venv`
+- Process-oriented (extract data, transform, visualize)
+- Often include step-by-step documentation of the approach taken
+
+**JavaScript Projects:**
+- Mermaid diagram generation and rendering
+- Configuration-driven scripts via `package.json`
+
+**MCP Experiments:**
+- Located in `/test-apps/mcp/`
+- Explores Model Context Protocol integration
+- Contains mock clients and server implementations
+
+## Key Conventions
+
+### File Organization
+
+- **Processing chains** are documented with descriptive filenames (e.g., `extract_elevations.py`, `pdf_to_images.py`)
+- **Output files** go into appropriately named subdirectories (e.g., `extracted_images/`)
+- **Failed or removed approaches** are noted in documentation but files are cleaned up
+
+### Documentation Standards
+
+- Each major project has a `<folder>_README.md` (preferred) or descriptive `.md` file explaining:
+  - What the project does
+  - How to set it up
+  - What tools/libraries are used
+  - Known issues or lessons learned
+- README filename rule (new):
+  - Name the top-level README in each `test-apps/<folder>` as `<folder>_README.md` (for example `ai_studio/ai_studio_README.md`) so READMEs are uniquely discoverable.
+  - If a contributor submits a plain `README.md`, merge its contents into the folder-specific `<folder>_README.md` (preserve existing content, append incoming content under a clearly marked "Merged from README.md" header) and update any internal links to the new filename.
+  - This rule reduces collisions, improves discoverability, and makes automated tooling simpler.
+- Processes are documented iteratively as they're attempted (not just final results)
+
+### VibeCoding Setup (ESLint + Prettier + Tree-sitter)
+
+**Location**: `/test-apps/` configuration files
+
+**Configuration Files**:
+- `eslint.config.js` - Modern ESLint 10.0+ flat config (ES Module format)
+- `.prettierrc.json` - Prettier formatting rules
+- `.vscode/settings.json` - VS Code editor integration
+
+**Extensions Required**:
+- `dbaeumer.vscode-eslint` - ESLint linting
+- `esbenp.prettier-vscode` - Prettier code formatter
+- `ms-python.black-formatter` - Python formatter (Black)
+- `ms-python.python` - Python language support
+- `ms-python.vscode-pylance` - Python type checking
+
+**npm Dependencies** (required):
+```bash
+npm install --save-dev eslint @eslint/js eslint-config-prettier globals
+```
+
+**Setup**: From `/test-apps/`, run:
+```bash
+npm install --save-dev eslint @eslint/js eslint-config-prettier globals
+```
+
+**Auto-Formatting Behavior**:
+- **JavaScript/TypeScript** files: ESLint + Prettier format on save
+- **Python** files: Black formatter applies on save
+- **JSON files**: Prettier formats on save
+- **All languages**: Tree-sitter provides accurate syntax highlighting, Code Lens shows references
+
+**Rules Summary**:
+- JavaScript: Single quotes, semicolons required, 2-space indent
+- Python: 4-space indent, Black formatting
+- All: Trailing whitespace removed, final newline inserted
+
+### Python Conventions
+
+- Scripts are executable and often use `python3` explicitly
+- Virtual environment is at `.venv` in the test-apps root
+- Print clear status messages (✅ Success, ❌ Failed) in output
+- Dependencies are documented inline in README/documentation files
+
+### Version & Platform Notes
+
+- Python: 3.14 (check with `python --version`)
+- Accounts for cross-platform needs (Windows/Cygwin/Linux)
+- Bash scripts handle both Linux and macOS conventions
+
+## Working in this Repository
+
+### Before Starting Work
+
+1. Check if a `.md` documentation file exists for the area you're working in
+2. Review the structure of `/test-apps` to understand what's a test vs. utility
+3. If adding a new experimental project, create it in an appropriately named subdirectory under `/test-apps`
+
+### When Adding New Projects
+
+- Create a `<folder>_README.md` (named after the folder, e.g. `ai_studio/ai_studio_README.md`) or descriptive markdown file explaining the purpose; if you submit a plain `README.md`, it will be merged into the folder-specific README by maintainers.
+- Document setup steps including virtual environment or npm install
+- If it's Python: use `.venv` in test-apps
+- Provide at least one fast, CI-friendly smoke-test and one automated test where applicable:
+  - Smoke-test: an executable shell script placed at the folder root (example: `python/smoke-test.sh`, `js/tests/smoke-js-my-js-app.sh`). Smoke-tests must run in <15s and print `SMOKE: OK` on success.
+  - Automated tests: put unit/functional tests under a conventional folder (Python: `python/tests/`, JS: `js/tests/`) and make them runnable with a single command (`.venv/bin/python -m pytest -q python -k quick` or a simple shell script for JS).
+  - Include exact commands to run the smoke-test and the automated tests in the `<folder>_README.md` (example: `.venv/bin/python python/sample.py` or `bash js/tests/smoke-js-my-js-app.sh`).
+
+CI enforcement (new)
+- This repository provides a GitHub Actions workflow: `test-apps/.github/workflows/smoke-and-unit-tests.yml`.
+  - **Purpose:** run fast, non-destructive smoke-tests and lightweight unit checks on push and PRs affecting `test-apps/` or `.github/`.
+  - **Jobs:**
+    - `smoke-and-unit` (ubuntu-latest): Python smoke-tests, fast pytest unit checks, README naming convention verification
+    - `clang-objc-smoke` (macos-latest): Objective-C/clang smoke-tests (macOS-specific)
+  - **Triggers:** push or pull_request affecting `test-apps/**` or `.github/**`
+  - **Local parity:** to reproduce CI locally, run the folder smoke-test(s) and the fast pytest command listed in the folder README. Example commands:
+    - `source .venv/bin/activate && bash python/smoke-test.sh`
+    - `source .venv/bin/activate && pytest -q python/tests -k quick`
+  - If your change adds an example, include its smoke-test and make sure `SMOKE: OK` is printed on success.
+- Clean up failed attempts but keep documentation of what was tried
+
+### When Running Scripts
+
+- Always activate the Python virtual environment first: `source .venv/bin/activate`
+
+#### Local shell-startup scripts & VS Code terminals ⚠️
+
+Some contributors run local shell-profile fragments that execute during login/interactive shells (examples: `sdkman` initialization, personal `.*profile` snippets, or repo-provided fragments). Those scripts can (rarely) cause the VS Code integrated terminal to exit with code 1 or behave inconsistently.
+
+**If you see "terminal process terminated with exit code: 1":**
+- Reproduce the exact VS Code startup command in a standard terminal to capture output:
+  ```bash
+  /bin/bash -l -c 'source .venv/bin/activate; exec /bin/bash -l'
+  ```
+- Guard fragile startup commands in your personal profile (avoid unconditional exits or failing commands):
+  ```bash
+  # Example: make sdkman init forgiving
+  if [ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]; then
+    source "$HOME/.sdkman/bin/sdkman-init.sh" || true
+  fi
+  ```
+- For CI / editor tasks prefer the explicit venv Python path (avoids relying on login-shell side-effects):
+  ```bash
+  ./.venv/bin/python path/to/script.py
+  ```
+
+**Note:** do **not** add personal, machine-specific shell-startup details to repo docs. Document startup scripts here only if they are required or shared by multiple contributors.
+
+- Inspect files safely — use `file` before `cat`:
+  - **Do not** run `cat <file>` to determine a file's type (it can dump binary data, overflow your terminal, or produce massive output).
+  - First run `file <path>` to learn the file type, then choose a safe inspector (`less`, `head`, `strings`, or `hexdump -C | head`) depending on the result. Example:
+    ```bash
+    file ./data.bin
+    file ./script.py
+    less ./script.py
+    hexdump -C ./data.bin | head
+    ```
+- Test locally before committing changes
+- Update documentation as you iterate through approaches
+
+**Note:** Prefer `gh copilot`; if you type `copilot` use the alias.
+
+### Login Shells vs. Interactive Shells
+
+Understanding the difference is important when configuring terminal environments (especially for VS Code terminal integration or custom shell startup):
+
+**Login Shells** (`bash -l`):
+- Started when you SSH into a machine or open a new Terminal window
+- Source `.bash_profile` (macOS) or `.bash_login` / `.profile` (Linux)
+- Run once per login session
+- Used for setting environment variables, PATH, exports
+- Example: `exec /bin/bash -l`
+
+**Interactive Non-Login Shells** (`bash -i`):
+- Started by a login shell or when running a subshell
+- Source `.bashrc` (not `.bash_profile`)
+- Run every time you open a nested shell or VS Code terminal
+- Used for aliases, functions, prompt customization
+- Example: `exec /bin/bash -i`
+
+**Standard Convention:**
+- `.bash_profile` - Set environment variables (APP_*, PATH, exports)
+- `.bashrc` - Define aliases, functions, prompt customization
+- Have `.bash_profile` source `.bashrc` at the end so both login and interactive shells get everything
+
+**For VS Code Terminal Integration:**
+If you want auto-activation of Python venv or sourcing of aliases, ensure your `.bashrc` includes those commands. Then use `-l` flag in terminal args to guarantee `.bash_profile` → `.bashrc` sourcing chain.
+
+**Single Git Repository:**
+```
+/Volumes/.../GitHub_be/pumped-scripts/           ← GIT REPO ROOT (.git is here)
+├── .git/                                        ← Git repository data
+├── .github/
+│   └── copilot-instructions.md                  ← MASTER FILE (this file)
+├── backend/                                     ← Java/Maven backend
+├── frontend/                                    ← Flutter/Dart frontend
+├── soafee/                                      ← Soafee architecture (Python docs)
+└── test-apps/                                   ← Experimental test applications
+    ├── .venv/                                   ← Python virtual environment
+    ├── .vscode/
+    │   ├── tasks.json
+    │   └── copilot-instructions.md        │   └── copilot-instructions.md        │   └── copilot-instructions.md        │s/
+    �    �    �    �    �    �    �    �    �    �    �    �    �                                  �    �    �    � lders
+```
+```
+�    �    �    �    �    �    �    �    �    �    �    �    �            -apps` is a SUBFOLDER, NOT a separate repo
+- ✅ `test-apps` does NOT have its own `.git` directory
+- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �- �t-apps is a Subfolder (Not Separate Repo)
+
+**Reasons for keeping test-apps in the **Reasons for keeping test-apps in the **Reasons for keeping test-apps in the *not production code
+
+**Reasons for keeping test-apps in the main repo:**
+1. **Low maintenance overhead** - No need to manage separate repo, remotes, or documentation standards
+2. **Easy extraction** - If a test-app evolves into something important, it can be extracted into its own repository
+
+### Copilot Instructions File and Symlink
+
+**Master file location:**
+```
+pumped-scripts/.github/copilot-instructions.md
+```
+
+**Symlink location:**
+```
+pumped-scripts/test-apps/.github/copilot-instructions.md → ../../.github/copilot-instructions.md
+```
+
+**When to use each workspace:**
+- **test-apps workspace**: Working on experimental Python/JS/Java/Dart projects, testing new languages or frameworks, want focused VS Code experience without seeing backend/frontend code, need isolated Python environment (`.venv`)
+- **pumped-scripts/ workspace**: Working across backend, frontend, and test-apps, need to see entire repository structure, making repository-wide changes, working on CI/CD or documentation
+
+Both workspaces share the same copilot instructions through the symlink mechanism!
+
+## Symlink Setup for test-apps Workspace
+
+**Purpose**: When opening `/test-apps` as a standalone VS Code workspace, Copilot CLI needs to find `copilot-instructions.md` in the git repo root (`pumped-scripts/`).
+
+**Symlink Created**:
+```bash
+test-apps/.github/copilot-instructions.md → ../../.github/copilot-instructions.md
+```
+
+**Why**: 
+- `test-apps` is not a git submodule; it's part of the parent `pumped-scripts` git repository
+- When you open `test-apps` as a standalone workspace (vs. opening `pumped-scripts` root), Copilot needs to traverse to find `.github/copilot-instructions.md`
+- The symlink at `test-apps/.github/copilot-instructions.md` ensures Copilot finds the instructions regardless of workspace scope
+
+**If the symlink breaks**:
+```bash
+# Recreate it:
+cd test-apps/.github
+ln -s ../../.github/copilot-instructions.md copilot-instructions.md
+# Or from repo root:
+ln -s ../../.github/copilot-instructions.md test-apps/.github/copilot-instructions.md
+```
+
+**Do NOT create symlinks in `test-apps/.vscode/`** — VS Code settings don't need them.

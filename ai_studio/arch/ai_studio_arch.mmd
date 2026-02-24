@@ -1,0 +1,36 @@
+flowchart TD
+
+    subgraph AIStudio["Google AI Studio (Prototype Lab)"]
+        A1["Prompt Design"]
+        A2["System Instructions"]
+        A3["Function Calling Specs"]
+        A4["Agent Flow Prototyping"]
+        A5["Export Code (Node/Python)"]
+    end
+
+    subgraph GitHub["GitHub Repository (Source of Truth)"]
+        G1["Backend Code"]
+        G2["Frontend Code"]
+        G3["AI Logic (exported from AI Studio)"]
+        G4["Branching + PR Workflow"]
+    end
+
+    subgraph LocalDev["Local Development"]
+        L1["Run Backend Locally"]
+        L2["Run Frontend Locally"]
+        L3["Use Personal Gemini API Key"]
+        L4["Test New Features"]
+    end
+
+    subgraph Cloud["Google Cloud Platform"]
+        C1["Cloud Run (Backend Deployment)"]
+        C2["Secret Manager (API Keys)"]
+        C3["Cloud Logging"]
+        C4["Cloud Build / GitHub Actions"]
+    end
+
+    AIStudio -->|Export Code| GitHub
+    GitHub -->|Clone / Branch| LocalDev
+    LocalDev -->|Push Changes| GitHub
+    GitHub -->|CI/CD| Cloud
+    Cloud -->|Public API| Users

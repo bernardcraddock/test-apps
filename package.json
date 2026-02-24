@@ -1,0 +1,22 @@
+{
+  "name": "test-apps",
+  "private": true,
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.3.0",
+    "nodemon": "^3.1.11"
+  },
+  "scripts": {
+    "mermaid:render": "mmdc -i \"$1\" -o \"${1%.mmd}.svg\" -s 2",
+    "mermaid:render:cwd": "mmdc -i \"$PWD/$1\" -o \"$PWD/${1%.mmd}.svg\" -s 2",
+    "mermaid:render:all": "mkdir -p ./diagrams && find ./ -name '*.mmd' -print0 | xargs -0 -I{} sh -c 'mmdc -i \"{}\" -o \"./diagrams/$(basename \"{}\" .mmd).svg\" -s 2'",
+    "dev-mongo": "nodemon ./mongodb/app.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "express": "^5.2.1",
+    "mongodb": "^7.1.0"
+  }
+}

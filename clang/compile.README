@@ -1,0 +1,5 @@
+ObjectiveC functions NSLog, NSObject are functions in the Cocoa framework
+
+clang++ -framework Foundation combined-main.mm -o combined-main 
+clang++ cppmain.cpp -o cppmain
+clang++ -framework foundation  objcmain.mm -o objcmain

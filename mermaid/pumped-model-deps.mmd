@@ -1,0 +1,34 @@
+flowchart LR
+  subgraph Model
+    PM[pumped-model]
+  end
+
+  subgraph Backend
+    PC[pumped-core]
+    PF[pumped-facade]
+    PWS[pumped-ws]
+    PMC[pumped-merchant-core]
+    PMF[pumped-merchant-facade]
+  end
+
+  subgraph Frontend
+    PConsole[PumpedConsole]
+    PApp[PumpedApp_Android]
+    PED[ped_Flutter]
+    PED2[pumped_end_device_Flutter]
+  end
+
+  PM --> PC
+  PM --> PF
+  PM --> PWS
+  PM --> PMC
+  PM --> PMF
+  PM --> PConsole
+  PM --> PApp
+  PM --> PED
+  PM --> PED2
+
+  %% Notes
+  classDef note fill:#f9f,stroke:#333,stroke-width:1px;
+  note1["pumped-model provides VO classes & ws model definitions used across services and clients"]:::note
+  PM --- note1

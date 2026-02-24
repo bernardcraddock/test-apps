@@ -1,0 +1,129 @@
+name: Smoke & fast unit tests
+
+on:
+  push:
+    paths:
+      - 'test-apps/**'
+      - '.github/**'
+  pull_request:
+    paths:
+      - 'test-apps/**'
+      - '.github/**'
+
+jobs:
+  smoke-and-unit:
+    name: Smoke tests & fast Python unit checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.14'
+
+      - name: Create lightweight venv & install test deps
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          python -m pip install -U pip setuptools
+          python -m pip install pytest || true
+          if [ -f python/requirements.txt ]; then python -m pip install -r python/requirements.txt || true; fi
+
+      - name: Setup Node (for JS smoke-tests)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Make smoke-tests executable
+        run: |
+          find test-apps -type f -name 'smoke-test.sh' -print0 | xargs -0 -n1 chmod +x || true
+          find test-apps -type f -path '*/tests/*.sh' -print0 | xargs -0 -n1 chmod +x || true
+
+      - name: Verify README naming convention
+        run: |
+          set -e
+          missing=0
+          folders=(ai_studio bash chat_bot clang dart java js mcp mermaid python)
+          for d in "${folders[@]}"; do
+            if [ ! -f "test-apps/$d/${d}_README.md" ]; then
+              echo "ERROR: missing test-apps/$d/${d}_README.md"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then exit 2; fi
+
+  clang-objc-smoke:
+    name: clang Objective-C smoke (macOS only)
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Make objc smoke-test executable
+        run: |
+          chmod +x clang/tests/smoke-clang-objc.sh || true
+      - name: Run clang Objective-C smoke-test
+        run: |
+          set -euo pipefail
+          bash clang/tests/smoke-clang-objc.sh
+
+
+      - name: Run Python smoke-tests
+        run: |
+          set -euo pipefail
+          . .venv/bin/activate
+          echo "-- python smoke-test --"
+          bash python/smoke-test.sh
+
+      - name: Run MCP smoke-test
+        run: |
+          set -euo pipefail
+          . .venv/bin/activate
+          echo "-- mcp smoke-test --"
+          bash mcp/smoke-test.sh
+
+      - name: Run ai_studio smoke-test
+        run: |
+          set -euo pipefail
+          . .venv/bin/activate
+          echo "-- ai_studio smoke-test --"
+          bash ai_studio/examples/hello_demo/smoke-test.sh
+
+      - name: Run JS smoke-tests
+        run: |
+          set -euo pipefail
+          echo "-- js smoke-tests --"
+          bash js/tests/smoke-js-my-js-app.sh
+
+      - name: Run Java smoke-test
+        run: |
+          set -euo pipefail
+          echo "-- java smoke-test --"
+          bash java/tests/smoke-java.sh
+
+      - name: Run Clang smoke-test (C++ & ObjC)
+        run: |
+          set -euo pipefail
+          echo "-- clang smoke-test (C++) --"
+          bash clang/tests/smoke-clang-cppmain.sh
+          echo "-- clang smoke-test (ObjC/ObjC++) --"
+          bash clang/tests/smoke-clang-objc.sh
+
+      - name: Run fast Python unit tests
+        run: |
+          set -euo pipefail
+          . .venv/bin/activate
+          pytest -q python/tests -k "quick or sample" || true
+
+      - name: Archive smoke-test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-logs
+          path: |
+            /tmp/*.log
+            test-apps/**/test-*.log

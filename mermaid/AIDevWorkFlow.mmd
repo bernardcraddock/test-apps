@@ -1,0 +1,48 @@
+
+flowchart LR
+    %% Define Layers
+    subgraph UI[User Interface Layer]
+        Prompt["Prompt"]
+        Code["AI-Generated Code"]
+        Eval["Eval Tests"]
+    end
+
+    subgraph AI[AI Layer]
+        Developer["Developer"]
+        AIProcess["AI interprets NL, converts to API calls"]
+        RAG["RAG Integration (SQL + Vector DB)"]
+    end
+
+    subgraph Data[Data Layer]
+        SQLDB["[(SQL Database)]"]
+        ERP["ERP Data Sources: Sales, Inventory, Products, Stores, Supply Chain"]
+        Viz["Visualization Layer (Charts, Dashboards, BI Tools)"]
+    end
+
+    %% Workflow Connections
+    Developer --> Prompt
+    Prompt --> AIProcess
+    AIProcess --> Code
+    Code --> Eval
+    Eval --> RAG
+    RAG --> Viz
+    RAG --> SQLDB
+    SQLDB --> RAG
+    RAG --> ERP
+    ERP --> Viz
+
+    %% API Label
+    SQLDB ---|"API (REST)"| RAG
+
+    %% CI/CD Arrows
+    Eval -.->|"CI/CD"| Developer
+    RAG -.->|"CI/CD"| Developer
+
+    %% Color Coding
+    classDef ui fill:#FFF3CD,stroke:#333,stroke-width:1px;
+    classDef ai fill:#D1ECF1,stroke:#333,stroke-width:1px;
+    classDef data fill:#E2E3E5,stroke:#333,stroke-width:1px;
+
+    class Prompt,Code,Eval ui;
+    class Developer,AIProcess,RAG ai;
+    class SQLDB,ERP,Viz data;

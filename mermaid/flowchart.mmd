@@ -1,0 +1,43 @@
+flowchart TD
+  Start([Start])
+  Enter[Enter username / password]
+  Start --> Enter
+
+  Validate{Input valid?}
+  Enter --> Validate
+  Validate -->|No| ValidationFail[Show validation errors]
+  ValidationFail --> End([End])
+  Validate -->|Yes| Exists{Account exists?}
+
+  Exists -->|No| NoAccount[Show error / offer signup]
+  NoAccount --> End
+  Exists -->|Yes| Locked{Account locked?}
+  Locked -->|Yes| LockedMsg[Show locked message / recovery options] --> End
+  Locked -->|No| PasswordOK{Password correct?}
+
+  PasswordOK -->|No| FailedAttempt[Record failed attempt / incr counter] --> End
+  PasswordOK -->|Yes| PasswordSuccess[Password accepted]
+
+  %% Optional: rate-limit / anti-abuse checks
+  RateLimit{Rate limit?} 
+  PasswordSuccess --> RateLimit
+  RateLimit -->|Yes| RateLimitFail[Throttle or show challenge] --> End
+  RateLimit -->|No| RateLimitPass[Continue] --> EmailCheck
+
+  %% Optional: two-factor authentication
+  %% TwoFAStart[Prompt / Send 2FA code]
+  %% PasswordSuccess --> TwoFAStart
+  %% Verify2FA{2FA valid?}
+  %% TwoFAStart --> Verify2FA
+  %% Verify2FA -->|No| TwoFAFail[Show 2FA error] --> End
+  %% Verify2FA -->|Yes| TwoFASuccess[2FA passed] --> Session
+
+  %% Optional: email verification check
+  EmailCheck{Email verified?}
+  TwoFASuccess --> EmailCheck
+  EmailCheck -->|No| EmailVerifyPrompt[Prompt to verify email] --> End
+  EmailCheck -->|Yes| EmailOK[Continue] --> Session
+
+  Session[Create session / token]
+  Session --> Redirect[Redirect to dashboard / intended page]
+  Redirect --> End

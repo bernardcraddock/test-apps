@@ -1,0 +1,27 @@
+        /* this is a CSS Comment */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #title {
+            color: blue;
+        }
+        #input {
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        /* Added save button style */
+        #saveButton, #deleteButton {
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 16px;
+            color: blue;
+        }
+        /* Added delete button style */
+        #deleteButton {
+            margin-top: 10px;
+            padding: 5px 10px;
+            font-size: 16px;
+            color: red;
+        }

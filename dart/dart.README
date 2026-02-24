@@ -1,0 +1,25 @@
+#
+# dart
+#
+
+$ dart help 
+
+
+#
+# compile
+#
+$ dart compile -h
+$ dart compile exe -h
+
+$ dart compile exe myapp.dart                                                   [ creates standalone executable mayapp.exe ]
+$ dart compile exe bin/myapp.dart -o bin/runme                                  [ -o specify the output path ]
+$ dart compile exe --verbosity all myapp.dart                                   [ complie --verbose 
+
+
+#
+# run
+#
+$ dart run -h
+
+$ dart run myapp.dart                                                           [ runs/interprest standalone mayapp.dart ]
+$ dart run egDartlate.dart                                                      [ late keyword examples ]

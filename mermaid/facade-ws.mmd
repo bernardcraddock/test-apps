@@ -1,0 +1,30 @@
+flowchart LR
+  subgraph Domain["Domain (pumped-merchant-core)"]
+    Dsvc["Merchant Services (e.g., MerchantService)"]
+    Dentity["Domain Entities (Merchant, FuelStation)"]
+  end
+
+  subgraph Facade["Facade (pumped-merchant-facade)"]
+    FacadeComp["Merchant Facade"]
+    Factory["MerchantVoFactory (convert domain -> VO)"]
+  end
+
+  subgraph WS["Web Service (pumped-ws)"]
+    Controller["Merchant Controllers (e.g., MerchantController)"]
+    WSModel["pumped-ws-model DTOs / Responses"]
+  end
+
+  subgraph Frontend["Frontends"]
+    Console[PumpedConsole]
+    Mobile[PumpedApp / ped]
+  end
+
+  Dentity -->|persist / read| Dsvc
+  Dsvc -->|returns domain objects| FacadeComp
+  FacadeComp -->|uses| Factory
+  Factory -->|builds VOs| WSModel
+  Controller -->|wraps / returns VO responses| WSModel
+  Controller -->|HTTP JSON| Console
+  Controller -->|HTTP JSON| Mobile
+  WSModel -->|consumed by| Console
+  WSModel -->|consumed by| Mobile

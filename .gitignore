@@ -1,0 +1,37 @@
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.ear
+*.jar
+*.jpeg
+*.nar
+*.png
+*.pdf
+*.rar
+*.svg
+*.tar.gz
+*.war
+*.zip
+
+
+node_modules/
+.venv/
+venv/
+
+.DS_Store/
+.DS_Store
+
+test-apps/package-lock.json
+
+# symbolic link to cannonical file pumped-scripts/.github/copilot-instructions.md 
+test-apps/.github/copilot-instructions.md
